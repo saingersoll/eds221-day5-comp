@@ -46,13 +46,13 @@ Add line-by-line comments wheres prompted in the code below, explaining what eac
 # The line below...
 time_yr <- seq(from = 0, to = 8, by = 1)
 
-# The line below...
+# The line below... 9 x 4 matrix
 proj_year <- matrix(ncol = length(fish_year0), nrow = length(time_yr))
 
-# The line below...
+# The line below...filling row
 proj_year[1, ] <- fish_year0
 
-# The for loop below...
+# The for loop below... dot product not pipe operator
 for (i in 2:length(time_yr)) {
   proj_year[i,] <- fish_leslie %*% proj_year[i-1,]
 }
@@ -62,6 +62,9 @@ for (i in 2:length(time_yr)) {
 colnames(proj_year) <- c("eggs", "fry", "juvenile", "adult")
 
 proj_df <- data.frame(time_yr, proj_year) %>% 
+  #pivot longer essentially makes stacked plots, 0E:0A, 1E:1A, . . .
+  #cols excludes the time year
+  #change col names to and move to values
   pivot_longer(cols = -time_yr, names_to = "lifestage", values_to = "stage_population")
 
 ggplot(data = proj_df, aes(x = time_yr, y = stage_population)) +
@@ -71,3 +74,24 @@ ggplot(data = proj_df, aes(x = time_yr, y = stage_population)) +
 ```
 
 Test different combinations of survival / reproduction and starting population structures to see what happens! 
+
+```{r}
+demo <- data.frame(year = c(1995, 2000, 2005),
+                   cats = c(2, 4, 6),
+                   dogs = c(10, 14, 12))
+
+ggplot(data = demo) + 
+  geom_line(aes(x = year, y = cats)) +
+  geom_line(aes(x = year, y =dogs)
+
+```
+
+```{r}
+demo_longer <- demo %>% 
+  pivot_longer(cols = c(cats, dogs), names_to = "species", values_to = "count")
+
+
+ggplot(data = demo_longer) +
+  geom_line(aes(x = year, y = species))
+```
+
